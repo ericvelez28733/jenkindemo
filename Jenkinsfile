@@ -1,9 +1,7 @@
 pipeline {
     agent any
-
     tools {
         jdk 'JDK17'
-        maven 'Maven3'
     }
 
     stages {
@@ -16,15 +14,15 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building Spring Boot project...'
-                sh 'mvn clean package -DskipTests'
+                echo 'Building Spring Boot project with Gradle...'
+                sh './gradlew clean build'
             }
             post {
                 success {
-                    echo 'Build successful — JAR file created!'
+                    echo '✅ Build successful — JAR file created!'
                 }
                 failure {
-                    echo 'Build failed! Please check logs.'
+                    echo '❌ Build failed! Please check logs.'
                 }
             }
         }
@@ -32,14 +30,14 @@ pipeline {
         stage('Archive Artifact') {
             steps {
                 echo 'Archiving built JAR artifact...'
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
             }
         }
 
         stage('Deploy Simulation') {
             steps {
                 echo 'Simulating deployment (placeholder for demo)...'
-                sh 'echo "Deploying app to local container..."'
+                sh 'echo "Deploying app locally..."'
             }
         }
     }
@@ -49,10 +47,10 @@ pipeline {
             echo 'Pipeline execution complete.'
         }
         success {
-            echo '✅ Build pipeline finished successfully.'
+            echo '✅ Pipeline finished successfully.'
         }
         failure {
-            echo '❌ Build pipeline failed. Please fix errors and retry.'
+            echo '❌ Pipeline failed. Please fix errors and retry.'
         }
     }
 }
